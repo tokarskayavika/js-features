@@ -1,5 +1,23 @@
-.f {
-    width: 200px;
-    height: 100px;
-    background: rgb(24, 207, 205);
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+}
+
+form {
+    margin: 0 auto;
+    width: 400px;
+}
+
+ul {
+    list-style: none;
+}
+
+h1 {
+    font-size: 35px;
+    text-transform: uppercase;
+}
+
+span {
+    color: rgb(88, 15, 152);
+    font-weight: bold;
 }

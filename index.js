@@ -1,12 +1,8 @@
 var ItemModel = Backbone.Model.extend({
     defaults: {
         name: 'myName',
-        price: 0
-    },
-    validate: function() {
-        if (attrs.price < 0) {
-            console.log('incorrect price');
-        }
+        price: 0,
+        checked: false
     }
 });
 
@@ -23,6 +19,9 @@ var itemArray = [{
 }, {
     name: 'Spoon',
     price: 150
+}, {
+    name: 'Rocket',
+    price: 900
 }];
 
 var items = new ItemCollection(itemArray);
@@ -33,31 +32,31 @@ var ItemView = Backbone.View.extend({
     // template: _.template('This is <%= this.name %>'),
     initialize: function() {
         this.render();
-        console.log(this);
     },
+
     render: function() {
-        // console.log(this.$el.html('<button>Hello</button>'));
-        // var template = this.template;
-        // console.log(template);
-        // console.log(template(items.at(0).get('name')));
-        // console.log(this.$el);
-        this.$el.html('<button>Hello</button>');
+        this.$el.html(`<input type="checkbox"/>
+            name: <span>${this.model.attributes.name}</span>,
+            price: <span>${this.model.attributes.price}</span>`);
         return this;
     }
 });
 
 var AppView = Backbone.View.extend({
-    // el: $('form'),
+    el: $('#my-list'),
+
     initialize: function() {
-        new ItemView({});
-        items.each(function(model, index) {
-            console.log(model, index);
-            var itemView = new ItemView(model);
-            // console.log(this.model);
-            // console.log('create new item');
-            // new ItemView(model);
-            $('.list').append(itemView.render());
-        });
+        this.collection = items;
+        this.render();
+    },
+
+    render: function() {
+        this.collection.each(function(item) {
+            var itemView = new ItemView({
+                model: item
+            });
+            this.$el.append(itemView.render().el);
+        }, this);
     }
 });
 
