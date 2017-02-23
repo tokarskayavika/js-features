@@ -3,11 +3,17 @@ var ItemModel = Backbone.Model.extend({
         name: 'myName',
         price: 0,
         checked: false
+    },
+    toggle: function() {
+        this.set('checked', !this.get('checked'));
     }
 });
 
 var ItemCollection = Backbone.Collection.extend({
-    model: ItemModel
+    model: ItemModel,
+    getChecked: function() {
+        return this.where({ checked: true });
+    }
 });
 
 var itemArray = [{
@@ -22,6 +28,12 @@ var itemArray = [{
 }, {
     name: 'Rocket',
     price: 900
+}, {
+    name: 'Cat',
+    price: 10000
+}, {
+    name: 'Bath',
+    price: 7400
 }];
 
 var items = new ItemCollection(itemArray);
@@ -29,16 +41,23 @@ var items = new ItemCollection(itemArray);
 var ItemView = Backbone.View.extend({
     tagName: 'li',
     className: 'item',
-    // template: _.template('This is <%= this.name %>'),
+    
+    events: {
+        'click label': 'toggleItem'
+    },
+
     initialize: function() {
         this.render();
     },
 
     render: function() {
-        this.$el.html(`<input type="checkbox"/>
+        this.$el.html(`<input type="checkbox" id="${this.model.cid}"/><label for="${this.model.cid}">
             name: <span>${this.model.attributes.name}</span>,
-            price: <span>${this.model.attributes.price}</span>`);
+            price: <span>${this.model.attributes.price}</span></label>`);
         return this;
+    },
+    toggleItem: function(event) {
+        this.model.toggle();
     }
 });
 
@@ -47,6 +66,7 @@ var AppView = Backbone.View.extend({
 
     initialize: function() {
         this.collection = items;
+        this.listenTo(this.collection, 'change', this.countTotal);
         this.render();
     },
 
@@ -57,6 +77,15 @@ var AppView = Backbone.View.extend({
             });
             this.$el.append(itemView.render().el);
         }, this);
+    },
+
+    countTotal: function() {
+        var checkedElements = this.collection.getChecked();
+        var sum = 0;
+        checkedElements.forEach((item) => {
+            sum += item.attributes.price;
+        })
+        $('#total').html(sum);
     }
 });
 
